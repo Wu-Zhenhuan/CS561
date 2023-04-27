@@ -2,7 +2,7 @@
 #include <string>
 #include <math.h>
 
-using namespace std;
+//using namespace std;
 
 namespace BF{
 
@@ -13,8 +13,8 @@ public:
 	int numElement;
 	int bitsPerElement;
 
-	void program(string key);
-	bool query(string key);
+	void program(std::string key);
+	bool query(std::string key);
 
 	int getIndexNum();
 	int getSize();

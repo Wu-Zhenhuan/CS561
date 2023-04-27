@@ -14,10 +14,14 @@ Value DB::get(int key)
 
 void DB::put(int key, Value val)
 {
-    table[key] = val;
+    this->buffer.put(key, val);
+    if (this->buffer.isFull()) this->flush();
+    /* table[key] = val; */
 }
 
-
+void DB::flush() {
+    std::vector<pair> pairs = this->buffer.flushOut();
+}
 std::vector<Value> DB::scan()
 {
     std::vector<Value> return_vector;

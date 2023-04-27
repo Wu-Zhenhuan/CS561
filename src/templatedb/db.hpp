@@ -10,6 +10,9 @@
 #include <vector>
 
 #include "templatedb/operation.hpp"
+#include "Buffer.h"
+
+#define BUFFER_SIZE 1024
 
 namespace templatedb
 {
@@ -44,7 +47,7 @@ class DB
 public:
     db_status status;
 
-    DB() {};
+    DB():buffer(BUFFER_SIZE) {};
     ~DB() {close();};
 
     Value get(int key);
@@ -66,8 +69,10 @@ private:
     std::fstream file;
     std::unordered_map<int, Value> table;
     size_t value_dimensions = 0;
-    
+    Buffer buffer;
+
     bool write_to_file();
+    void flush();
 };
 
 }   // namespace templatedb
