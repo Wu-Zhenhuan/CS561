@@ -4,7 +4,7 @@
 
 #ifndef TEMPLATEDB_RUN_H
 #define TEMPLATEDB_RUN_H
-#include "db.hpp"
+#include "Value.h"
 
 class Run {
 public:
@@ -12,7 +12,7 @@ public:
 
 private:
     int capacity;
-    std::vector<std::vector<pair>> run;
+    std::vector<std::vector<templatedb::Pair>> run;
 };
 
 

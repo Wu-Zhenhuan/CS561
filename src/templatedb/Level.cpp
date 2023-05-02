@@ -3,7 +3,7 @@
 //
 
 #include "Level.h"
-Level::Level(int currentLevel) : currentLevel(0) {}
+Level::Level() : currentLevel(0) {}
 
 Value Level::get(int key) {
     return Value();
@@ -11,7 +11,7 @@ Value Level::get(int key) {
 int Level::levelCapacity(int l) {
     return BUFFER_SIZE << l;
 }
-void Level::flushIn(std::vector<pair> buffer) {
+void Level::flushIn(std::vector<Pair> buffer) {
     if (this->levels.size()==0) {
         this->newLevel();
         this->levels.push_back(buffer);
@@ -20,16 +20,16 @@ void Level::flushIn(std::vector<pair> buffer) {
         this->currentLevel++;
 
     }
-    std::vector<pair> level;
+    std::vector<Pair> level;
 
 }
 void Level::newLevel() {
-    run level(this->levelCapacity(this->currentLevel));
+    Run level(this->levelCapacity(this->currentLevel));
     levels.push_back(level);
     this->currentLevel++;
 }
 
-run Level::merge(run a, run b) {
+Run Level::merge(run a, run b) {
     run resultSet(a.size() + b.size());
     std::merge(a.begin(),a.end(),b.begin(),b.end(), std::back_inserter(resultSet));
 

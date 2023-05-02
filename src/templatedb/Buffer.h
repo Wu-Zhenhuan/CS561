@@ -4,12 +4,13 @@
 
 #ifndef TEMPLATEDB_BUFFER_H
 #define TEMPLATEDB_BUFFER_H
-#include "db.hpp"
+
+#include "Value.h"
 
 //template<typename K, typename V>
 typedef templatedb::Value Value;
-typedef std::pair<int,Value> pair;
-typedef std::vector<pair> run;
+typedef templatedb::Pair Pair;
+typedef std::vector<Pair> run;
 class Buffer {
 private:
     int capacity;
@@ -17,15 +18,15 @@ private:
     int min;
     int max;
 
-    std::vector<pair> pairs;
+    std::vector<Pair> pairs;
 public:
     explicit Buffer(int capacity) : capacity(capacity), length(0) {
         pairs.reserve(capacity);
     };
     Value get(int key);
-    void put(int key, Value val);
-    std::vector<pair> scan();
-    std::vector<pair> scan(int min_key, int max_key);
+    void put(int key, templatedb::Value val);
+    std::vector<Pair> scan();
+    std::vector<Pair> scan(int min_key, int max_key);
     void del(int key);
     void del(int min_key, int max_key);
     size_t size();

@@ -4,26 +4,29 @@
 
 #ifndef TEMPLATEDB_LEVEL_H
 #define TEMPLATEDB_LEVEL_H
-#include "db.hpp"
-#include "BloomFilter/BloomFilter.h"
 
+#include "Value.h"
+#include "Run.h"
+#include "BloomFilter/BloomFilter.h"
+typedef templatedb::Value Value;
+typedef templatedb::Pair Pair;
 class Level {
 private:
     int currentLevel;
-    std::vector<std::vector<pair>> levels;
+    std::vector<std::vector<templatedb::Pair>> levels;
     std::vector<BF::BloomFilter> bloomFilters;
 public:
-    explicit Level(int currentLevel);
-
+    //explicit Level(int currentLevel);
+    explicit Level();
     Value get(int key);
     void put(int key, Value val);
-    std::vector<pair> scan();
-    std::vector<pair> scan(int min_key, int max_key);
+    std::vector<Pair> scan();
+    std::vector<Pair> scan(int min_key, int max_key);
     void del(int key);
     void del(int min_key, int max_key);
-    void flushIn(run buffer);
+    void flushIn(std::vector<Pair> buffer);
     int levelCapacity(int l);
-    run merge(run a, run b);
+    Run merge(Run a, Run b);
     void newLevel();
 };
 

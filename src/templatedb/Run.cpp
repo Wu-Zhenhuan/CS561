@@ -5,5 +5,5 @@
 #include "Run.h"
 
 Run::Run(int capacity) : capacity(capacity) {
-    this->run = std::vector<std::vector<pair>>(capacity)
+    this->run = std::vector<std::vector<templatedb::Pair>>(capacity);
 };
