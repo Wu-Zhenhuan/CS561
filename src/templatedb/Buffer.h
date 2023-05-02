@@ -10,7 +10,8 @@
 //template<typename K, typename V>
 typedef templatedb::Value Value;
 typedef templatedb::Pair Pair;
-typedef std::vector<Pair> run;
+typedef templatedb::run run;
+
 class Buffer {
 private:
     int capacity;

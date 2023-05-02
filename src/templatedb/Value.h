@@ -6,6 +6,7 @@
 #define TEMPLATEDB_VALUE_H
 
 #include <vector>
+#define BUFFER_SIZE 1024
 
 namespace templatedb {
     class Value
@@ -25,6 +26,7 @@ namespace templatedb {
         }
     };
     typedef std::pair<int,Value> Pair;
+    typedef std::vector<Pair> run;
 }
 
 #endif //TEMPLATEDB_VALUE_H

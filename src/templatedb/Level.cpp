@@ -24,12 +24,12 @@ void Level::flushIn(std::vector<Pair> buffer) {
 
 }
 void Level::newLevel() {
-    Run level(this->levelCapacity(this->currentLevel));
-    levels.push_back(level);
+    std::vector<templatedb::Pair> level(this->levelCapacity(this->currentLevel));
+    this->levels.push_back(level);
     this->currentLevel++;
 }
 
-Run Level::merge(run a, run b) {
+run Level::merge(run a, run b) {
     run resultSet(a.size() + b.size());
     std::merge(a.begin(),a.end(),b.begin(),b.end(), std::back_inserter(resultSet));
 

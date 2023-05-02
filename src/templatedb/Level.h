@@ -6,10 +6,11 @@
 #define TEMPLATEDB_LEVEL_H
 
 #include "Value.h"
-#include "Run.h"
 #include "BloomFilter/BloomFilter.h"
 typedef templatedb::Value Value;
 typedef templatedb::Pair Pair;
+typedef templatedb::run run;
+
 class Level {
 private:
     int currentLevel;
@@ -26,7 +27,7 @@ public:
     void del(int min_key, int max_key);
     void flushIn(std::vector<Pair> buffer);
     int levelCapacity(int l);
-    Run merge(Run a, Run b);
+    run merge(run a, run b);
     void newLevel();
 };
 

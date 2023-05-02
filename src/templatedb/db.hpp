@@ -13,8 +13,6 @@
 #include "Buffer.h"
 #include "Level.h"
 
-#define BUFFER_SIZE 1024
-
 namespace templatedb
 {
 
