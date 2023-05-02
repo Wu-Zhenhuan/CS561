@@ -5,8 +5,8 @@
 #include "Level.h"
 Level::Level() : currentLevel(0) {}
 
-Value Level::get(int key) {
-    return Value();
+templatedb::Value Level::get(int key) {
+    return templatedb::Value(false);
 }
 int Level::levelCapacity(int l) {
     return BUFFER_SIZE << l;
@@ -31,8 +31,11 @@ void Level::newLevel() {
 
 run Level::merge(run a, run b) {
     run resultSet(a.size() + b.size());
-    std::merge(a.begin(),a.end(),b.begin(),b.end(), std::back_inserter(resultSet));
-
+    std::merge(a.begin(),a.end(),b.begin(),b.end(), std::back_inserter(resultSet), [ ](const Pair& lhs, const Pair& rhs )
+    {
+        return lhs.first < rhs.first;
+    });
+    return resultSet;
     /*
     size_t i = 0; size_t j = 0;
     run resultSet;

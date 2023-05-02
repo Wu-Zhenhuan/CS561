@@ -7,20 +7,20 @@
 
 #include "Value.h"
 #include "BloomFilter/BloomFilter.h"
-typedef templatedb::Value Value;
+//typedef templatedb::Value Value;
 typedef templatedb::Pair Pair;
 typedef templatedb::run run;
 
 class Level {
 private:
     int currentLevel;
-    std::vector<std::vector<templatedb::Pair>> levels;
+    std::vector<run> levels;
     std::vector<BF::BloomFilter> bloomFilters;
 public:
     //explicit Level(int currentLevel);
     explicit Level();
-    Value get(int key);
-    void put(int key, Value val);
+    templatedb::Value get(int key);
+    void put(int key, templatedb::Value val);
     std::vector<Pair> scan();
     std::vector<Pair> scan(int min_key, int max_key);
     void del(int key);

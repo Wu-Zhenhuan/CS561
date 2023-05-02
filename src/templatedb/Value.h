@@ -18,7 +18,9 @@ namespace templatedb {
         Value() {}
         Value(bool _visible) {visible = _visible;}
         Value(bool _visible, int _range) {visible = _visible; range = _range;}
-        Value(std::vector<int> _items) { items = _items;}
+        Value(const std::vector<int> & _items) { items = _items;}
+        //Value(const Value&) = delete;
+        //Value(const Value& value) = delete;
 
         bool operator ==(Value const & other) const
         {
