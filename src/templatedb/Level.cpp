@@ -51,18 +51,24 @@ void Level::newLevel() {
  * @return
  */
 run Level::merge(run newer, run older) {
+
+    /*
     run resultSet(newer.size() + older.size());
     std::merge(newer.begin(), newer.end(), older.begin(), older.end(), std::back_inserter(resultSet), [ ](const Pair& lhs, const Pair& rhs )
     {
         return lhs.first < rhs.first;
     });
     return resultSet;
-    /*
+    */
     size_t i = 0; size_t j = 0;
     run resultSet;
-    resultSet.reserve(newer.size() + older.size())
+    resultSet.reserve(newer.size() + older.size());
     while (i < newer.size() && j < older.size()) {
-        if (newer.at(i).first < older.at(j).first) {
+        if (newer.at(i).first = older.at(j).first) {
+            resultSet.push_back(newer.at(i++));
+            j++;
+        }
+        else if (newer.at(i).first < older.at(j).first) {
             resultSet.push_back(newer.at(i++));
         } else {
             resultSet.push_back(older.at(j++));
@@ -73,7 +79,7 @@ run Level::merge(run newer, run older) {
         resultSet.insert(resultSet.end(), newer.begin() + i, newer.end());
     } else if (j < older.size()) {
         resultSet.insert(resultSet.end(), newer.begin() + j, older.end());
-    }*/
+    }
 }
 std::vector<Pair> Level::scan(int min_key, int max_key) {
     std::vector<Pair> resultSet;
