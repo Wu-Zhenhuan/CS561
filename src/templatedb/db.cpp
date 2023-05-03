@@ -46,6 +46,11 @@ std::vector<Value> DB::scan()
 
 std::vector<Value> DB::scan(int min_key, int max_key)
 {
+    std::vector<Pair> bufferResult = this->buffer.scan(min_key, max_key);
+    std::vector<Pair> diskResult = this->level.scan(min_key, max_key);
+    std::merge();
+
+    /*
     std::vector<Value> return_vector;
     for (auto pair: table)
     {
@@ -53,7 +58,7 @@ std::vector<Value> DB::scan(int min_key, int max_key)
             return_vector.push_back(pair.second);
     }
 
-    return return_vector;
+    return return_vector;*/
 }
 
 
