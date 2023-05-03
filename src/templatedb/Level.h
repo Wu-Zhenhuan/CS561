@@ -28,7 +28,7 @@ public:
     void del(int min_key, int max_key);
     void flushIn(std::tuple<run, int, int> buffer);
     int levelCapacity(int l);
-    run merge(run a, run b);
+    run merge(run newer, run older);
     void newLevel();
 };
 

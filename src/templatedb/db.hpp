@@ -56,6 +56,7 @@ private:
 
     bool write_to_file();
     void flush();
+    std::vector<Value> finalMerge(std::vector<run> a, std::vector<run> b);
 };
 
 }   // namespace templatedb

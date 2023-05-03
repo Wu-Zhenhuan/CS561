@@ -44,10 +44,15 @@ void Level::newLevel() {
     this->levels.push_back(level);
     this->currentLevel++;
 }
-
-run Level::merge(run a, run b) {
-    run resultSet(a.size() + b.size());
-    std::merge(a.begin(),a.end(),b.begin(),b.end(), std::back_inserter(resultSet), [ ](const Pair& lhs, const Pair& rhs )
+/**
+ * A lovely merge that deal with duplicate in newer way that keeps newer one
+ * @param newer
+ * @param older
+ * @return
+ */
+run Level::merge(run newer, run older) {
+    run resultSet(newer.size() + older.size());
+    std::merge(newer.begin(), newer.end(), older.begin(), older.end(), std::back_inserter(resultSet), [ ](const Pair& lhs, const Pair& rhs )
     {
         return lhs.first < rhs.first;
     });
@@ -55,18 +60,33 @@ run Level::merge(run a, run b) {
     /*
     size_t i = 0; size_t j = 0;
     run resultSet;
-    resultSet.reserve(a.size() + b.size())
-    while (i < a.size() && j < b.size()) {
-        if (a.at(i).first < b.at(j).first) {
-            resultSet.push_back(a.at(i++));
+    resultSet.reserve(newer.size() + older.size())
+    while (i < newer.size() && j < older.size()) {
+        if (newer.at(i).first < older.at(j).first) {
+            resultSet.push_back(newer.at(i++));
         } else {
-            resultSet.push_back(b.at(j++));
+            resultSet.push_back(older.at(j++));
         }
     }
 
-    if (i < a.size()) {
-        resultSet.insert(resultSet.end(), a.begin() + i, a.end());
-    } else if (j < b.size()) {
-        resultSet.insert(resultSet.end(), a.begin() + j, b.end());
+    if (i < newer.size()) {
+        resultSet.insert(resultSet.end(), newer.begin() + i, newer.end());
+    } else if (j < older.size()) {
+        resultSet.insert(resultSet.end(), newer.begin() + j, older.end());
     }*/
+}
+std::vector<Pair> Level::scan(int min_key, int max_key) {
+    std::vector<Pair> resultSet;
+    for (int i = this->currentLevel - 1; i >= 0; i--) {
+        if ((this->mins.at(i) > max_key) || this->maxs.at(i) < min_key) {
+            continue;
+        }
+        std::vector<Pair> levelResult;
+        for (auto &pair: this->levels.at(i)) {
+            levelResult.push_back(pair);
+
+        }
+        this->merge(resultSet, levelResult);
+    }
+    return resultSet;
 }
