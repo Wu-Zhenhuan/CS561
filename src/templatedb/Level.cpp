@@ -37,10 +37,10 @@ void Level::flushIn(std::tuple<run, int, int> buffer) {
     else if (levels.at(levels.size()-1).size() > levelCapacity(levels.size())) {
         this->currentLevel++;
     }
-    /*
+
     // create a bloom filter for the new run
     BF::BloomFilter bf(bufferRun.size(), 10);
-
+/*
     // insert keys from the new run into the bloom filter
     for (auto& pair: bufferRun) {
         bf.program(std::to_string(pair.first));
