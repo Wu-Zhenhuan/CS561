@@ -5,6 +5,14 @@ using namespace templatedb;
 
 Value DB::get(int key)
 {
+    // query the buffer
+    Value result = this->buffer.get(key);
+
+    // query the disk
+    if ((result.visible == false) && (result.range == -404)) {
+        result = this->level.get(key);
+    }
+    return result;
     /*
     if (table.count(key))
         return table[key];
@@ -21,7 +29,7 @@ void DB::put(int key, templatedb::Value val)
 }
 
 void DB::flush() {
-    std::vector<Pair> oldBuffer = this->buffer.flushOut();
+    std::tuple<run, int, int> oldBuffer = this->buffer.flushOut();
     this->level.flushIn(oldBuffer);
 }
 std::vector<Value> DB::scan()

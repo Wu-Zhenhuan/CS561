@@ -16,6 +16,7 @@ private:
     int currentLevel;
     std::vector<run> levels;
     std::vector<BF::BloomFilter> bloomFilters;
+    std::vector<int> mins, maxs;
 public:
     //explicit Level(int currentLevel);
     explicit Level();
@@ -25,7 +26,7 @@ public:
     std::vector<Pair> scan(int min_key, int max_key);
     void del(int key);
     void del(int min_key, int max_key);
-    void flushIn(std::vector<Pair> buffer);
+    void flushIn(std::tuple<run, int, int> buffer);
     int levelCapacity(int l);
     run merge(run a, run b);
     void newLevel();

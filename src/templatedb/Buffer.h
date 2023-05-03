@@ -32,7 +32,7 @@ public:
     void del(int min_key, int max_key);
     size_t size();
     bool isFull();
-    run flushOut();
+    std::tuple<run, int, int> flushOut();
 };
 
 

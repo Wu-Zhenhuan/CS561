@@ -7,11 +7,15 @@
 Value Buffer::get(int key) {
     if ((key < this->min) || (key > this->max)) return Value(false);
     for (auto &pair: this->pairs) {
-        if ((pair.first == key) && (pair.second.visible)) {
+        if (pair.first == key) {
             return pair.second;
+        } else if (!pair.second.visible) {
+            if ((pair.first <= key) && (key <= pair.first + pair.second.range)) {
+                return pair.second;
+            }
         }
     }
-    return Value(false);
+    return Value(false, -404);
 }
 
 void Buffer::put(int key, Value val) {
@@ -23,7 +27,7 @@ void Buffer::put(int key, Value val) {
 
     /* Updates if the key already exists */
     for (auto &pair: this->pairs) {
-        if ((pair.first == key) /* && (Pair.second.visible) */) {
+        if (pair.first == key) {
             pair.second = val;
             return;
         } else if (!pair.second.visible) {
@@ -40,12 +44,11 @@ void Buffer::put(int key, Value val) {
 
 std::vector<Pair> Buffer::scan() {
     std::vector<Pair> resultSet;
-    for (auto &pair : this->pairs) {
+    for (auto &pair: this->pairs) {
         if (pair.second.visible) resultSet.push_back(pair);
     }
 
-    std::sort(resultSet.begin(), resultSet.end(), [ ](const Pair& lhs, const Pair& rhs )
-    {
+    std::sort(resultSet.begin(), resultSet.end(), [](const Pair &lhs, const Pair &rhs) {
         return lhs.first < rhs.first;
     });
     return resultSet;
@@ -53,13 +56,12 @@ std::vector<Pair> Buffer::scan() {
 
 std::vector<Pair> Buffer::scan(int min_key, int max_key) {
     std::vector<Pair> resultSet;
-    for (auto &pair : this->pairs) {
-        if ((pair.second.visible) && (pair.first >=min_key) && (pair.first <= max_key))
+    for (auto &pair: this->pairs) {
+        if ((pair.second.visible) && (pair.first >= min_key) && (pair.first <= max_key))
             resultSet.push_back(pair);
     }
 
-    std::sort(resultSet.begin(), resultSet.end(), [ ](const Pair& lhs, const Pair& rhs )
-    {
+    std::sort(resultSet.begin(), resultSet.end(), [](const Pair &lhs, const Pair &rhs) {
         return lhs.first < rhs.first;
     });
     return resultSet;
@@ -70,7 +72,7 @@ void Buffer::del(int key) {
     for (auto &pair: this->pairs) {
         if ((pair.first == key) && (pair.second.visible)) {
             pair.second.visible = false;
-            this->length --;
+            this->length--;
             return;
         }
     }
@@ -98,17 +100,16 @@ bool Buffer::isFull() {
     return this->pairs.size() >= this->capacity;
 }
 
-std::vector<Pair> Buffer::flushOut() {
+std::tuple<run, int, int> Buffer::flushOut() {
     std::vector<Pair> resultSet = this->pairs;
     /*
     for (auto &pair : this->pairs) {
         if (pair.second.visible) resultSet.push_back(pair);
     }*/
 
-    std::sort(resultSet.begin(), resultSet.end(), [ ](const Pair& lhs, const Pair& rhs )
-    {
+    std::sort(resultSet.begin(), resultSet.end(), [](const Pair &lhs, const Pair &rhs) {
         return lhs.first < rhs.first;
     });
     pairs.clear();
-    return resultSet;
+    return std::make_tuple(resultSet, this->min, this->max);
 }

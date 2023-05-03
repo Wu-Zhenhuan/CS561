@@ -11,14 +11,16 @@ templatedb::Value Level::get(int key) {
 int Level::levelCapacity(int l) {
     return BUFFER_SIZE << l;
 }
-void Level::flushIn(std::vector<Pair> buffer) {
+void Level::flushIn(std::tuple<run, int, int> buffer) {
+    run bufferRun = std::get<0>(buffer);
     if (this->levels.size()==0) {
         this->newLevel();
-        this->levels.push_back(buffer);
+        this->levels.push_back(bufferRun);
+        this->mins.push_back(std::get<1>(buffer));
+        this->maxs.push_back(std::get<2>(buffer));
     }
     else if (levels.at(levels.size()-1).size() > levelCapacity(levels.size())) {
         this->currentLevel++;
-
     }
     std::vector<Pair> level;
 
