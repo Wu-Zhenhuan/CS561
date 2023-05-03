@@ -19,6 +19,7 @@ templatedb::Value Level::get(int key) {
 
         }
     }
+    return NULL;
 }
 
 
@@ -36,8 +37,20 @@ void Level::flushIn(std::tuple<run, int, int> buffer) {
     else if (levels.at(levels.size()-1).size() > levelCapacity(levels.size())) {
         this->currentLevel++;
     }
-    std::vector<Pair> level;
+    /*
+    // create a bloom filter for the new run
+    BF::BloomFilter bf(bufferRun.size(), 10);
 
+    // insert keys from the new run into the bloom filter
+    for (auto& pair: bufferRun) {
+        bf.program(std::to_string(pair.first));
+    }
+
+    // add the bloom filter to the vector of bloom filters
+    this->bloomFilters.push_back(bf);
+    */
+    // add the new run to the current level
+    this->levels.at(this->currentLevel - 1) = this->merge(bufferRun, this->levels.at(this->currentLevel - 1));
 }
 void Level::newLevel() {
     std::vector<templatedb::Pair> level(this->levelCapacity(this->currentLevel));
@@ -64,7 +77,7 @@ run Level::merge(run newer, run older) {
     run resultSet;
     resultSet.reserve(newer.size() + older.size());
     while (i < newer.size() && j < older.size()) {
-        if (newer.at(i).first = older.at(j).first) {
+        if (newer.at(i).first == older.at(j).first) {
             resultSet.push_back(newer.at(i++));
             j++;
         }
@@ -80,6 +93,7 @@ run Level::merge(run newer, run older) {
     } else if (j < older.size()) {
         resultSet.insert(resultSet.end(), newer.begin() + j, older.end());
     }
+    return resultSet;
 }
 std::vector<Pair> Level::scan(int min_key, int max_key) {
     std::vector<Pair> resultSet;
