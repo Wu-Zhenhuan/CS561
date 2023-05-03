@@ -3,28 +3,28 @@ import csv
 import random
 import sys
 
-MAX_VALUE = 2**16 - 1
+MAX_VALUE = 2 ** 16 - 1
 OPERATIONS = ['I', 'Q', 'S', 'D']
 
 
 def get_op(dims, key_max):
     op_code = random.choice(OPERATIONS)
-    args = [random.choice(range(key_max))] # First arg is always a key
+    args = [random.choice(range(key_max))]  # First arg is always a key
     if (op_code == 'I'):
         args += random.sample(range(MAX_VALUE), dims)
     elif (op_code == 'S'):
         args += [random.choice(range(key_max))]
         args.sort()
     elif (op_code == 'D'):
-	if ( random.choice(range(key_max))%2 == 0 ):
-	        args += [random.choice(range(key_max))]
-	        args.sort()
+        if (random.choice(range(key_max)) % 2 == 0):
+            args += [random.choice(range(key_max))]
+            args.sort()
 
     return [op_code] + args
 
 
 def main(args):
-    if ('-h' in args) or not(len(args) == 5):
+    if ('-h' in args) or not (len(args) == 5):
         print('USAGE:\n\t%s <num_ops> <dimensions> <key_max> <folder>' % (args[0]))
         sys.exit(0)
 

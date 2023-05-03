@@ -9,7 +9,7 @@ TEST(PersistenceTest, BasicOpenClose)
 {
     std::string fname = "test_db.db"; 
     templatedb::DB db;
-    templatedb::Value v1({1, 2});
+    templatedb::Value v1(vector<int>{1, 2});
     db.open(fname);
     db.put(5, v1);
     db.close();
@@ -25,8 +25,8 @@ TEST(PersistenceTest, DeleteOpenClose)
 {
     std::string fname = "test_db.db"; 
     templatedb::DB db;
-    templatedb::Value v1({1, 2});
-    templatedb::Value v2({12, 21});
+    templatedb::Value v1(vector<int>{1, 2});
+    templatedb::Value v2(vector<int>{12, 21});
     db.open(fname);
     db.put(5, v1);
     db.put(1, v2);

@@ -11,8 +11,7 @@
 
 #include "templatedb/operation.hpp"
 #include "Buffer.h"
-
-#define BUFFER_SIZE 1024
+#include "Level.h"
 
 namespace templatedb
 {
@@ -23,23 +22,6 @@ typedef enum _status_code
     CLOSED = 1,
     ERROR_OPEN = 100,
 } db_status;
-
-
-class Value
-{
-public:
-    std::vector<int> items;
-    bool visible = true;
-
-    Value() {}
-    Value(bool _visible) {visible = _visible;}
-    Value(std::vector<int> _items) { items = _items;}
-
-    bool operator ==(Value const & other) const
-    {
-        return (visible == other.visible) && (items == other.items);
-    }
-};
 
 
 class DB
@@ -70,9 +52,11 @@ private:
     std::unordered_map<int, Value> table;
     size_t value_dimensions = 0;
     Buffer buffer;
+    Level level;
 
     bool write_to_file();
     void flush();
+    std::vector<Value> finalMerge(std::vector<run> a, std::vector<run> b);
 };
 
 }   // namespace templatedb

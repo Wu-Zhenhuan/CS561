@@ -5,14 +5,23 @@ using namespace templatedb;
 
 Value DB::get(int key)
 {
+    // query the buffer
+    Value result = this->buffer.get(key);
+
+    // query the disk
+    if ((result.visible == false) && (result.range == -404)) {
+        result = this->level.get(key);
+    }
+    return result;
+    /*
     if (table.count(key))
         return table[key];
     
-    return Value(false);
+    return Value(false);*/
 }
 
 
-void DB::put(int key, Value val)
+void DB::put(int key, templatedb::Value val)
 {
     this->buffer.put(key, val);
     if (this->buffer.isFull()) this->flush();
@@ -20,7 +29,8 @@ void DB::put(int key, Value val)
 }
 
 void DB::flush() {
-    std::vector<pair> pairs = this->buffer.flushOut();
+    std::tuple<run, int, int> oldBuffer = this->buffer.flushOut();
+    this->level.flushIn(oldBuffer);
 }
 std::vector<Value> DB::scan()
 {
@@ -36,6 +46,12 @@ std::vector<Value> DB::scan()
 
 std::vector<Value> DB::scan(int min_key, int max_key)
 {
+    std::vector<Pair> bufferResult = this->buffer.scan(min_key, max_key);
+    std::vector<Pair> diskResult = this->level.scan(min_key, max_key);
+
+    //std::merge();
+
+    /*
     std::vector<Value> return_vector;
     for (auto pair: table)
     {
@@ -43,7 +59,7 @@ std::vector<Value> DB::scan(int min_key, int max_key)
             return_vector.push_back(pair.second);
     }
 
-    return return_vector;
+    return return_vector;*/
 }
 
 

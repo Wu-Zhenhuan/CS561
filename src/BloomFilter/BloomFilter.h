@@ -2,7 +2,7 @@
 #include <string>
 #include <math.h>
 
-//using namespace std;
+using namespace std;
 
 namespace BF{
 
