@@ -6,8 +6,22 @@
 Level::Level() : currentLevel(0) {}
 
 templatedb::Value Level::get(int key) {
-    return templatedb::Value(false);
+    for (int i = this->currentLevel - 1; i >= 0; i--) {
+        if ((this->mins.at(i) > key) || this->maxs.at(i) < key) {
+            continue;
+        }
+        for (auto &pair: this->levels.at(i)) {
+            if (pair.first == key) {
+                return pair.second;
+            } else if ((!pair.second.visible) && (pair.first <= key) && (key <= pair.first + pair.second.range) ) {
+                return templatedb::Value(false);
+            }
+
+        }
+    }
 }
+
+
 int Level::levelCapacity(int l) {
     return BUFFER_SIZE << l;
 }
