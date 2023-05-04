@@ -29,7 +29,7 @@ class DB
 public:
     db_status status;
 
-    DB():buffer(BUFFER_SIZE) {};
+    DB():buffer(BUFFER_SIZE), level() {};
     ~DB() {close();};
 
     Value get(int key);
@@ -56,7 +56,7 @@ private:
 
     bool write_to_file();
     void flush();
-    std::vector<Value> finalMerge(std::vector<run> a, std::vector<run> b);
+    std::vector<Value> finalMerge(run higher, run lower);
 };
 
 }   // namespace templatedb

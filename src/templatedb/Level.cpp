@@ -3,6 +3,7 @@
 //
 
 #include "Level.h"
+#include <iostream>
 
 Level::Level() : currentLevel(0) {}
 
@@ -145,7 +146,9 @@ run Level::merge(run higher, run lower) {
 }
 
 std::vector<Pair> Level::scan(int min_key, int max_key) {
+    std::cout<<"************************************"<<std::endl;
     std::vector<Pair> resultSet;
+    std::cout<<min_key<<", "<<max_key<<std::endl;
     for (int i = this->currentLevel - 1; i >= 0; i--) {
         if ((this->mins.at(i) > max_key) || this->maxs.at(i) < min_key) {
             continue;
@@ -157,5 +160,5 @@ std::vector<Pair> Level::scan(int min_key, int max_key) {
         }
         this->merge(resultSet, levelResult);
     }
-    return resultSet;
+    return std::move(resultSet);
 }
