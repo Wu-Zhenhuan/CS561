@@ -3,6 +3,7 @@
 //
 
 #include "Level.h"
+
 Level::Level() : currentLevel(0) {}
 
 templatedb::Value Level::get(int key) {
@@ -13,7 +14,7 @@ templatedb::Value Level::get(int key) {
         for (auto &pair: this->levels.at(i)) {
             if (pair.first == key) {
                 return pair.second;
-            } else if ((!pair.second.visible) && (pair.first <= key) && (key <= pair.first + pair.second.range) ) {
+            } else if ((!pair.second.visible) && (pair.first <= key) && (key <= pair.first + pair.second.range)) {
                 return templatedb::Value(false);
             }
 
@@ -26,20 +27,36 @@ templatedb::Value Level::get(int key) {
 int Level::levelCapacity(int l) {
     return BUFFER_SIZE << l;
 }
+
 void Level::flushIn(std::tuple<run, int, int> buffer) {
     run bufferRun = std::get<0>(buffer);
-    if (this->levels.size()==0) {
+    if (this->levels.size() == 0) {
         this->newLevel();
-        this->levels.push_back(bufferRun);
+        this->levels.push_back(std::move(bufferRun));
         this->mins.push_back(std::get<1>(buffer));
         this->maxs.push_back(std::get<2>(buffer));
-    }
-    else if (levels.at(levels.size()-1).size() > levelCapacity(levels.size())) {
-        this->currentLevel++;
+    } else {
+        run mergedRun = std::move(this->merge(bufferRun, this->levels.at(0)));
+        this->levels.at(0) = std::move(mergedRun);
+        for (int i = 0; i < this->currentLevel - 1; i++) {
+            if (levels.at(i).size() > levelCapacity(levels.size())) {
+                mergedRun = std::move(this->merge(this->levels.at(i), this->levels.at(i+1)));
+                this->levels.at(i+1) = std::move(mergedRun);
+                this->levels.at(i) = run(this->levelCapacity(i));
+            }
+        }
+        if (levels.at(currentLevel - 1).size() > levelCapacity(currentLevel - 1)) {
+            this->newLevel();
+            mergedRun = std::move(this->merge(
+                    this->levels.at(this->currentLevel - 2),
+                    this->levels.at(this->currentLevel - 1)));
+            this->levels.at(this->currentLevel - 1) = std::move(mergedRun);
+            this->levels.at(this->currentLevel - 2) = run(this->levelCapacity(currentLevel - 2));
+        }
     }
 
     // create a bloom filter for the new run
-    BF::BloomFilter bf(bufferRun.size(), 10);
+    //BF::BloomFilter bf(bufferRun.size(), 10);
 /*
     // insert keys from the new run into the bloom filter
     for (auto& pair: bufferRun) {
@@ -52,49 +69,55 @@ void Level::flushIn(std::tuple<run, int, int> buffer) {
     // add the new run to the current level
     this->levels.at(this->currentLevel - 1) = this->merge(bufferRun, this->levels.at(this->currentLevel - 1));
 }
+
 void Level::newLevel() {
     std::vector<templatedb::Pair> level(this->levelCapacity(this->currentLevel));
     this->levels.push_back(level);
     this->currentLevel++;
 }
+
 /**
- * A lovely merge that deal with duplicate in newer way that keeps newer one
- * @param newer
- * @param older
+ * A lovely merge that deal with duplicate in higher way that keeps higher one
+ * @param higher
+ * @param lower
  * @return
  */
-run Level::merge(run newer, run older) {
+run Level::merge(run higher, run lower) {
 
     /*
-    run resultSet(newer.size() + older.size());
-    std::merge(newer.begin(), newer.end(), older.begin(), older.end(), std::back_inserter(resultSet), [ ](const Pair& lhs, const Pair& rhs )
+    run resultSet(higher.size() + lower.size());
+    std::merge(higher.begin(), higher.end(), lower.begin(), lower.end(), std::back_inserter(resultSet), [ ](const Pair& lhs, const Pair& rhs )
     {
         return lhs.first < rhs.first;
     });
     return resultSet;
     */
-    size_t i = 0; size_t j = 0;
+    size_t i = 0;
+    size_t j = 0;
     run resultSet;
-    resultSet.reserve(newer.size() + older.size());
-    while (i < newer.size() && j < older.size()) {
-        if (newer.at(i).first == older.at(j).first) {
-            resultSet.push_back(newer.at(i++));
-            j++;
-        }
-        else if (newer.at(i).first < older.at(j).first) {
-            resultSet.push_back(newer.at(i++));
+    resultSet.reserve(higher.size() + lower.size());
+    while (i < higher.size() && j < lower.size()) {
+        if (higher.at(i).first == lower.at(j).first) {
+            resultSet.push_back(higher.at(i++));
+            if (lower.at(j).second.visible || lower.at(j).second.range <= 0) {
+                // Not a range tombstone
+                j++;
+            }
+        } else if (higher.at(i).first < lower.at(j).first) {
+            resultSet.push_back(higher.at(i++));
         } else {
-            resultSet.push_back(older.at(j++));
+            resultSet.push_back(lower.at(j++));
         }
     }
 
-    if (i < newer.size()) {
-        resultSet.insert(resultSet.end(), newer.begin() + i, newer.end());
-    } else if (j < older.size()) {
-        resultSet.insert(resultSet.end(), newer.begin() + j, older.end());
+    if (i < higher.size()) {
+        resultSet.insert(resultSet.end(), higher.begin() + i, higher.end());
+    } else if (j < lower.size()) {
+        resultSet.insert(resultSet.end(), higher.begin() + j, lower.end());
     }
-    return resultSet;
+    return std::move(resultSet);
 }
+
 std::vector<Pair> Level::scan(int min_key, int max_key) {
     std::vector<Pair> resultSet;
     for (int i = this->currentLevel - 1; i >= 0; i--) {

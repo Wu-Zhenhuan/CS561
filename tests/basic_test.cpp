@@ -12,10 +12,10 @@ protected:
     templatedb::DB db1;
     templatedb::DB db2;
 
-    templatedb::Value v1 = templatedb::Value(vector<int>(1, 2));
-    templatedb::Value v2 = templatedb::Value(vector<int>({6, 10}));
+    templatedb::Value v1 = templatedb::Value(std::vector<int>{1, 2});
+    templatedb::Value v2 = templatedb::Value(std::vector<int>{6, 10});
     templatedb::Value v3 = templatedb::Value({1, 1, 5, 7});
-    templatedb::Value v4 = templatedb::Value(vector<int>{13, 176});
+    templatedb::Value v4 = templatedb::Value(std::vector<int>{13, 176});
 
 
     void SetUp() override 

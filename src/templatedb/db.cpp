@@ -83,7 +83,8 @@ void DB::del(int min_key, int max_key)
 
 size_t DB::size()
 {
-    return table.size();
+    this->buffer.size();
+    //return table.size();
 }
 
 
