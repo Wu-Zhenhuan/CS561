@@ -5,7 +5,7 @@ set(CMAKE_CXX_STANDARD 11)
 set(templatedb_lib
         src/templatedb/db.cpp
         src/templatedb/operation.cpp
-        src/templatedb/Buffer.cpp src/templatedb/Buffer.h src/templatedb/Level.cpp src/templatedb/Level.h src/templatedb/Value.cpp src/templatedb/Value.h)
+        src/templatedb/Buffer.cpp src/templatedb/Buffer.h src/templatedb/Levelling.cpp src/templatedb/Levelling.h src/templatedb/Value.cpp src/templatedb/Value.h src/templatedb/Tiering.cpp src/templatedb/Tiering.h)
 
 set(bloomfilter_lib
         src/BloomFilter/BloomFilter.cpp

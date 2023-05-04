@@ -11,7 +11,7 @@
 
 #include "templatedb/operation.hpp"
 #include "Buffer.h"
-#include "Level.h"
+#include "Levelling.h"
 
 namespace templatedb
 {
@@ -52,7 +52,7 @@ private:
     std::unordered_map<int, Value> table;
     size_t value_dimensions = 0;
     Buffer buffer;
-    Level level;
+    Levelling level;
 
     bool write_to_file();
     void flush();

@@ -2,12 +2,12 @@
 // Created by Zhenhuan Wu on 4/25/23.
 //
 
-#include "Level.h"
+#include "Levelling.h"
 #include <iostream>
 
-Level::Level() : currentLevel(0) {}
+Levelling::Levelling() : currentLevel(0) {}
 
-templatedb::Value Level::get(int key) {
+templatedb::Value Levelling::get(int key) {
     for (int i = this->currentLevel - 1; i >= 0; i--) {
         if ((this->mins.at(i) > key) || this->maxs.at(i) < key) {
             continue;
@@ -25,11 +25,11 @@ templatedb::Value Level::get(int key) {
 }
 
 
-int Level::levelCapacity(int l) {
+int Levelling::levelCapacity(int l) {
     return BUFFER_SIZE << l;
 }
 
-void Level::flushIn(std::tuple<run, int, int> buffer) {
+void Levelling::flushIn(std::tuple<run, int, int> buffer) {
     run bufferRun = std::get<0>(buffer);
     if (this->levels.size() == 0) {
         this->newLevel();
@@ -70,7 +70,7 @@ void Level::flushIn(std::tuple<run, int, int> buffer) {
 //    // add the new run to the current level
 //    this->levels.at(this->currentLevel - 1) = this->merge(bufferRun, this->levels.at(this->currentLevel - 1));
 }
-//void Level::flushIn(std::tuple<run, int, int> buffer) {
+//void Levelling::flushIn(std::tuple<run, int, int> buffer) {
 //    run bufferRun = std::get<0>(buffer);
 //    if (this->levels.size()==0) {
 //        this->newLevel();
@@ -97,7 +97,7 @@ void Level::flushIn(std::tuple<run, int, int> buffer) {
 //}
 
 
-void Level::newLevel() {
+void Levelling::newLevel() {
     std::vector<templatedb::Pair> level(this->levelCapacity(this->currentLevel));
     this->levels.push_back(level);
     this->currentLevel++;
@@ -109,7 +109,7 @@ void Level::newLevel() {
  * @param lower
  * @return
  */
-run Level::merge(run higher, run lower) {
+run Levelling::merge(run higher, run lower) {
 
     /*
     run resultSet(higher.size() + lower.size());
@@ -145,7 +145,7 @@ run Level::merge(run higher, run lower) {
     return std::move(resultSet);
 }
 
-std::vector<Pair> Level::scan(int min_key, int max_key) {
+std::vector<Pair> Levelling::scan(int min_key, int max_key) {
     std::cout<<"************************************"<<std::endl;
     std::vector<Pair> resultSet;
     std::cout<<min_key<<", "<<max_key<<std::endl;
