@@ -28,47 +28,73 @@ int Level::levelCapacity(int l) {
     return BUFFER_SIZE << l;
 }
 
+//void Level::flushIn(std::tuple<run, int, int> buffer) {
+//    run bufferRun = std::get<0>(buffer);
+//    if (this->levels.size() == 0) {
+//        this->newLevel();
+//        this->levels.push_back(std::move(bufferRun));
+//        this->mins.push_back(std::get<1>(buffer));
+//        this->maxs.push_back(std::get<2>(buffer));
+//    } else {
+//        run mergedRun = std::move(this->merge(bufferRun, this->levels.at(0)));
+//        this->levels.at(0) = std::move(mergedRun);
+//        for (int i = 0; i < this->currentLevel - 1; i++) {
+//            if (levels.at(i).size() > levelCapacity(levels.size())) {
+//                mergedRun = std::move(this->merge(this->levels.at(i), this->levels.at(i+1)));
+//                this->levels.at(i+1) = std::move(mergedRun);
+//                this->levels.at(i) = run(this->levelCapacity(i));
+//            }
+//        }
+//        if (levels.at(currentLevel - 1).size() > levelCapacity(currentLevel - 1)) {
+//            this->newLevel();
+//            mergedRun = std::move(this->merge(
+//                    this->levels.at(this->currentLevel - 2),
+//                    this->levels.at(this->currentLevel - 1)));
+//            this->levels.at(this->currentLevel - 1) = std::move(mergedRun);
+//            this->levels.at(this->currentLevel - 2) = run(this->levelCapacity(currentLevel - 2));
+//        }
+//    }
+//
+//    // create a bloom filter for the new run
+//    //BF::BloomFilter bf(bufferRun.size(), 10);
+///*
+//    // insert keys from the new run into the bloom filter
+//    for (auto& pair: bufferRun) {
+//        bf.program(std::to_string(pair.first));
+//    }
+//
+//    // add the bloom filter to the vector of bloom filters
+//    this->bloomFilters.push_back(bf);
+//    */
+//    // add the new run to the current level
+//    this->levels.at(this->currentLevel - 1) = this->merge(bufferRun, this->levels.at(this->currentLevel - 1));
+//}
 void Level::flushIn(std::tuple<run, int, int> buffer) {
     run bufferRun = std::get<0>(buffer);
-    if (this->levels.size() == 0) {
+    if (this->levels.size()==0) {
         this->newLevel();
-        this->levels.push_back(std::move(bufferRun));
+        this->levels.push_back(bufferRun);
         this->mins.push_back(std::get<1>(buffer));
         this->maxs.push_back(std::get<2>(buffer));
-    } else {
-        run mergedRun = std::move(this->merge(bufferRun, this->levels.at(0)));
-        this->levels.at(0) = std::move(mergedRun);
-        for (int i = 0; i < this->currentLevel - 1; i++) {
-            if (levels.at(i).size() > levelCapacity(levels.size())) {
-                mergedRun = std::move(this->merge(this->levels.at(i), this->levels.at(i+1)));
-                this->levels.at(i+1) = std::move(mergedRun);
-                this->levels.at(i) = run(this->levelCapacity(i));
-            }
-        }
-        if (levels.at(currentLevel - 1).size() > levelCapacity(currentLevel - 1)) {
-            this->newLevel();
-            mergedRun = std::move(this->merge(
-                    this->levels.at(this->currentLevel - 2),
-                    this->levels.at(this->currentLevel - 1)));
-            this->levels.at(this->currentLevel - 1) = std::move(mergedRun);
-            this->levels.at(this->currentLevel - 2) = run(this->levelCapacity(currentLevel - 2));
-        }
     }
-
+    else if (levels.at(levels.size()-1).size() > levelCapacity(levels.size())) {
+        this->currentLevel++;
+    }
     // create a bloom filter for the new run
-    //BF::BloomFilter bf(bufferRun.size(), 10);
-/*
-    // insert keys from the new run into the bloom filter
-    for (auto& pair: bufferRun) {
-        bf.program(std::to_string(pair.first));
-    }
+    BF::BloomFilter bf(100, 10);
+//
+//    // insert keys from the new run into the bloom filter
+//    for (auto& pair: bufferRun) {
+//        bf.program(std::to_string(pair.first));
+//    }
+//
+//    // add the bloom filter to the vector of bloom filters
+//    this->bloomFilters.push_back(bf);
 
-    // add the bloom filter to the vector of bloom filters
-    this->bloomFilters.push_back(bf);
-    */
     // add the new run to the current level
     this->levels.at(this->currentLevel - 1) = this->merge(bufferRun, this->levels.at(this->currentLevel - 1));
 }
+
 
 void Level::newLevel() {
     std::vector<templatedb::Pair> level(this->levelCapacity(this->currentLevel));
