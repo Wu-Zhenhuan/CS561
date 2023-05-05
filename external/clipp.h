@@ -3379,7 +3379,7 @@ public:
     /** @brief returns number of children */
     size_type size() const noexcept { return children_.size(); }
 
-    /** @brief returns number of nested levels; 1 for a flat group */
+    /** @brief returns number of nested tiers; 1 for a flat group */
     size_type depth() const {
         size_type n = 0;
         for(const auto& c : children_) {
