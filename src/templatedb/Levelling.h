@@ -6,7 +6,7 @@
 #include "Value.h"
 #include "BloomFilter/BloomFilter.h"
 
-// Alias for templatedb::Pair and templatedb::run
+// Alias for templatedb::Pair & templatedb::run
 typedef templatedb::Pair Pair;
 typedef templatedb::run run;
 
