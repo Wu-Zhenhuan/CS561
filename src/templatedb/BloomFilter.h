@@ -1,3 +1,6 @@
+#ifndef _TEMPLATEDB_BLOOMFILTER_H_
+#define _TEMPLATEDB_BLOOMFILTER_H_
+
 #include <vector>
 #include <string>
 #include <math.h>
@@ -28,3 +31,7 @@ namespace BF{
     };
 
 } // namespace BF
+
+
+
+#endif /* _TEMPLATEDB_BLOOMFILTER_H_ */
