@@ -5,11 +5,12 @@ set(CMAKE_CXX_STANDARD 11)
 set(templatedb_lib
         src/templatedb/db.cpp
         src/templatedb/operation.cpp
-        src/templatedb/Buffer.cpp src/templatedb/Buffer.h src/templatedb/Levelling.cpp src/templatedb/Levelling.h src/templatedb/Value.cpp src/templatedb/Value.h src/templatedb/Tiering.cpp src/templatedb/Tiering.h)
+        src/templatedb/Buffer.cpp src/templatedb/Buffer.h src/templatedb/Levelling.cpp src/templatedb/Levelling.h src/templatedb/Value.cpp src/templatedb/Value.h src/templatedb/Tiering.cpp src/templatedb/Tiering.h
+        src/templatedb/BloomFilter.cpp     src/templatedb/murmurhash.cpp)
 
 set(bloomfilter_lib
-        src/BloomFilter/BloomFilter.cpp
-        src/BloomFilter/murmurhash.cpp
+        src/templatedb/BloomFilter.cpp
+        src/templatedb/murmurhash.cpp
         )
 
 add_library(${PROJECT_NAME} ${templatedb_lib})
