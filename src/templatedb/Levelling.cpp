@@ -12,6 +12,16 @@ templatedb::Value Levelling::get(int key) {
         if ((this->mins.at(i) > key) || this->maxs.at(i) < key) {
             continue;
         }
+        bool mayContainKey = false;
+        for (auto& bf : this->bloomFilters) {
+            if (bf.query(std::to_string(key))) {
+                mayContainKey = true;
+                break;
+            }
+        }
+        if (!mayContainKey) {
+            continue;
+        }
         for (auto &pair: this->levels.at(i)) {
             if (pair.first == key) {
                 return pair.second;
@@ -57,18 +67,18 @@ void Levelling::flushIn(std::tuple<run, int, int> buffer) {
     }
 
     // create a bloom filter for the new run
-//    BF::BloomFilter bf(bufferRun.size(), 10);
-//
-//    // insert keys from the new run into the bloom filter
-//    for (auto& pair: bufferRun) {
-//        bf.program(std::to_string(pair.first));
-//    }
-//
-//    // add the bloom filter to the vector of bloom filters
-//    this->bloomFilters.push_back(bf);
-//
-//    // add the new run to the current level
-//    this->levels.at(this->currentLevel - 1) = this->merge(bufferRun, this->levels.at(this->currentLevel - 1));
+    BF::BloomFilter bf(bufferRun.size(), 10);
+
+    // insert keys from the new run into the bloom filter
+    for (auto& pair: bufferRun) {
+        bf.program(std::to_string(pair.first));
+    }
+
+    // add the bloom filter to the vector of bloom filters
+    this->bloomFilters.push_back(bf);
+
+    // add the new run to the current level
+    this->levels.at(this->currentLevel - 1) = this->merge(bufferRun, this->levels.at(this->currentLevel - 1));
 }
 //void Levelling::flushIn(std::tuple<run, int, int> buffer) {
 //    run bufferRun = std::get<0>(buffer);
@@ -164,7 +174,8 @@ std::vector<Pair> Levelling::scan(int min_key, int max_key) {
 }
 std::vector<Pair> Levelling::scan() {
     std::vector<Pair> resultSet;
-    for (int i = this->currentLevel - 1; i >= 0; i--) {
+    for (int i = 0; i < this->currentLevel - 1; i++) {
+    //for (int i = this->currentLevel - 1; i >= 0; i--) {
         std::vector<Pair> levelResult;
         for (auto &pair: this->levels.at(i)) {
             levelResult.push_back(pair);

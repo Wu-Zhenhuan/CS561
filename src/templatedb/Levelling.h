@@ -6,7 +6,7 @@
 #define TEMPLATEDB_LEVELLING_H
 
 #include "Value.h"
-#include "BloomFilter/BloomFilter.h"
+#include "BloomFilter.h"
 //typedef templatedb::Value Value;
 typedef templatedb::Pair Pair;
 typedef templatedb::run run;
@@ -31,6 +31,8 @@ public:
     int levelCapacity(int l);
     run merge(run higher, run lower);
     void newLevel();
+    bool write_to_file();
+    bool read_from_file();
 };
 
 
