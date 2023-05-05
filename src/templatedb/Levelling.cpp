@@ -3,12 +3,11 @@
 //
 
 #include "Levelling.h"
-#include <iostream>
 
 Levelling::Levelling() : currentLevel(0) {}
 
 templatedb::Value Levelling::get(int key) {
-    for (int i = this->currentLevel - 1; i >= 0; i--) {
+    for (int i = 0; i < this->currentLevel - 1; i++) {
         if ((this->mins.at(i) > key) || this->maxs.at(i) < key) {
             continue;
         }
@@ -21,7 +20,7 @@ templatedb::Value Levelling::get(int key) {
 
         }
     }
-    return NULL;
+    return templatedb::Value(false);
 }
 
 
@@ -68,17 +67,17 @@ void Levelling::flushIn(std::tuple<run, int, int> buffer) {
 //    this->bloomFilters.push_back(bf);
 //
 //    // add the new run to the current level
-//    this->levels.at(this->currentLevel - 1) = this->merge(bufferRun, this->levels.at(this->currentLevel - 1));
+//    this->tiers.at(this->currentLevel - 1) = this->merge(bufferRun, this->tiers.at(this->currentLevel - 1));
 }
 //void Levelling::flushIn(std::tuple<run, int, int> buffer) {
 //    run bufferRun = std::get<0>(buffer);
-//    if (this->levels.size()==0) {
-//        this->newLevel();
-//        this->levels.push_back(bufferRun);
+//    if (this->tiers.size()==0) {
+//        this->newTier();
+//        this->tiers.push_back(bufferRun);
 //        this->mins.push_back(std::get<1>(buffer));
 //        this->maxs.push_back(std::get<2>(buffer));
 //    }
-//    else if (levels.at(levels.size()-1).size() > levelCapacity(levels.size())) {
+//    else if (tiers.at(tiers.size()-1).size() > levelCapacity(tiers.size())) {
 //        this->currentLevel++;
 //    }
 //    // create a bloom filter for the new run
@@ -93,7 +92,7 @@ void Levelling::flushIn(std::tuple<run, int, int> buffer) {
 ////    this->bloomFilters.push_back(bf);
 //
 //    // add the new run to the current level
-//    this->levels.at(this->currentLevel - 1) = this->merge(bufferRun, this->levels.at(this->currentLevel - 1));
+//    this->tiers.at(this->currentLevel - 1) = this->merge(bufferRun, this->tiers.at(this->currentLevel - 1));
 //}
 
 
@@ -155,8 +154,8 @@ std::vector<Pair> Levelling::scan(int min_key, int max_key) {
         }
         std::vector<Pair> levelResult;
         for (auto &pair: this->levels.at(i)) {
-            levelResult.push_back(pair);
-
+            if ((pair.first >= min_key) && (pair.first <= max_key))
+                levelResult.push_back(pair);
         }
         this->merge(resultSet, levelResult);
     }

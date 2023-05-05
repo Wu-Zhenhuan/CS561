@@ -12,7 +12,7 @@ typedef templatedb::run run;
 class Tiering {
 private:
     int currentLevel;
-    std::vector<run> levels;
+    std::vector<run> tiers;
     std::vector<BF::BloomFilter> bloomFilters;
     std::vector<int> mins, maxs;
 public:
@@ -26,7 +26,7 @@ public:
     void flushIn(std::tuple<run, int, int> buffer);
     int levelCapacity(int l);
     run merge(run higher, run lower);
-    void newLevel();
+    void newTier();
 
 };
 
