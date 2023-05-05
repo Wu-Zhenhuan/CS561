@@ -22,7 +22,7 @@ public:
     std::vector<Pair> scan();
     std::vector<Pair> scan(int min_key, int max_key);
     void flushIn(std::tuple<run, int, int> buffer);
-    int levelCapacity(int l);
+    int tierCapacity(int t);
     run merge(run higher, run lower);
     void newTier();
 

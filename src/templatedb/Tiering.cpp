@@ -23,8 +23,8 @@ templatedb::Value Tiering::get(int key) {
 }
 
 
-int Tiering::levelCapacity(int l) {
-    return BUFFER_SIZE << l;
+int Tiering::tierCapacity(int t) {
+    return BUFFER_SIZE << t;
 }
 
 void Tiering::flushIn(std::tuple<run, int, int> buffer) {
@@ -38,19 +38,28 @@ void Tiering::flushIn(std::tuple<run, int, int> buffer) {
         run mergedRun = std::move(this->merge(bufferRun, this->tiers.at(0)));
         this->tiers.at(0) = std::move(mergedRun);
         for (int i = 0; i < this->currentLevel - 1; i++) {
-            if (tiers.at(i).size() > levelCapacity(tiers.size())) {
+            if (tiers.at(i).size() > tierCapacity(tiers.size())) {
                 mergedRun = std::move(this->merge(this->tiers.at(i), this->tiers.at(i + 1)));
                 this->tiers.at(i + 1) = std::move(mergedRun);
-                this->tiers.at(i) = run(this->levelCapacity(i));
+
+                this->mins.at(0) = this->tiers.at(0).front().first;
+                this->maxs.at(0) = this->tiers.at(0).back().first;
+
+                this->tiers.at(i) = run(this->tierCapacity(i));
             }
         }
-        if (tiers.at(currentLevel - 1).size() > levelCapacity(currentLevel - 1)) {
+        if (tiers.at(currentLevel - 1).size() > tierCapacity(currentLevel - 1)) {
             this->newTier();
             mergedRun = std::move(this->merge(
                     this->tiers.at(this->currentLevel - 2),
                     this->tiers.at(this->currentLevel - 1)));
             this->tiers.at(this->currentLevel - 1) = std::move(mergedRun);
-            this->tiers.at(this->currentLevel - 2) = run(this->levelCapacity(currentLevel - 2));
+
+
+            this->mins.at(this->currentLevel - 1) = this->tiers.at(this->currentLevel - 1).front().first;
+            this->maxs.at(this->currentLevel - 1) = this->tiers.at(this->currentLevel - 1).back().first;
+
+            this->tiers.at(this->currentLevel - 2) = run(this->tierCapacity(currentLevel - 2));
         }
     }
 
@@ -58,7 +67,7 @@ void Tiering::flushIn(std::tuple<run, int, int> buffer) {
 
 
 void Tiering::newTier() {
-    std::vector<templatedb::Pair> level(this->levelCapacity(this->currentLevel));
+    std::vector<templatedb::Pair> level(this->tierCapacity(this->currentLevel));
     this->tiers.push_back(level);
     this->currentLevel++;
 }

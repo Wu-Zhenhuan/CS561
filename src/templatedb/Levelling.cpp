@@ -89,7 +89,7 @@ void Levelling::flushIn(std::tuple<run, int, int> buffer) {
 //        this->mins.push_back(std::get<1>(buffer));
 //        this->maxs.push_back(std::get<2>(buffer));
 //    }
-//    else if (levels.at(levels.size()-1).size() > levelCapacity(levels.size())) {
+//    else if (levels.at(levels.size()-1).size() > tierCapacity(levels.size())) {
 //        this->currentLevel++;
 //    }
 //    // create a bloom filter for the new run
@@ -166,7 +166,8 @@ std::vector<Pair> Levelling::scan(int min_key, int max_key) {
         }
         std::vector<Pair> levelResult;
         for (auto &pair: this->levels.at(i)) {
-            levelResult.push_back(pair);
+            if ((pair.first >= min_key) && (pair.first <= max_key))
+                levelResult.push_back(pair);
 
         }
         this->merge(resultSet, levelResult);
