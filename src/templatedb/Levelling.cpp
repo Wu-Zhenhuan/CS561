@@ -8,7 +8,7 @@
 Levelling::Levelling() : currentLevel(0) {}
 
 templatedb::Value Levelling::get(int key) {
-    for (int i = this->currentLevel - 1; i >= 0; i--) {
+    for (int i = 0; i < currentLevel - 1; i++) {
         if ((this->mins.at(i) > key) || this->maxs.at(i) < key) {
             continue;
         }
@@ -21,7 +21,7 @@ templatedb::Value Levelling::get(int key) {
 
         }
     }
-    return NULL;
+    return templatedb::Value(false);
 }
 
 
@@ -149,7 +149,7 @@ std::vector<Pair> Levelling::scan(int min_key, int max_key) {
     //std::cout<<"************************************"<<std::endl;
     std::vector<Pair> resultSet;
     // std::cout<<min_key<<", "<<max_key<<std::endl;
-    for (int i = this->currentLevel - 1; i >= 0; i--) {
+    for (int i = 0; i < currentLevel - 1; i++) {
         if ((this->mins.at(i) > max_key) || this->maxs.at(i) < min_key) {
             continue;
         }
@@ -164,7 +164,7 @@ std::vector<Pair> Levelling::scan(int min_key, int max_key) {
 }
 std::vector<Pair> Levelling::scan() {
     std::vector<Pair> resultSet;
-    for (int i = this->currentLevel - 1; i >= 0; i--) {
+    for (int i = 0; i < currentLevel - 1; i++) {
         std::vector<Pair> levelResult;
         for (auto &pair: this->levels.at(i)) {
             levelResult.push_back(pair);
