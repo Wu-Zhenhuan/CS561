@@ -17,6 +17,7 @@ private:
     std::vector<run> levels;
     std::vector<BF::BloomFilter> bloomFilters;
     std::vector<int> mins, maxs;
+
 public:
     //explicit Levelling(int currentLevel);
     explicit Levelling();

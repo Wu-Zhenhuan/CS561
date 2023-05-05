@@ -34,22 +34,28 @@ void DB::flush() {
 }
 std::vector<Value> DB::scan()
 {
-    std::vector<Value> return_vector;
+    std::vector<Pair> bufferResult = this->buffer.scan();
+    std::vector<Pair> diskResult = this->level.scan();
+    std::vector<Value> finalResult = this->finalMerge(bufferResult, diskResult);
+    return std::move(finalResult);
+    return std::vector<Value>(0);
+    /* std::vector<Value> return_vector;
     for (auto pair: table)
     {
         return_vector.push_back(pair.second);
     }
 
-    return return_vector;
+    return return_vector; */
 }
 
 
 std::vector<Value> DB::scan(int min_key, int max_key)
 {
     std::vector<Pair> bufferResult = this->buffer.scan(min_key, max_key);
-    std::cout<<"############################"<<std::endl;
+    //std::cout<<"############################"<<std::endl;
     std::vector<Pair> diskResult = this->level.scan(min_key, max_key);
-    return std::vector<Value>();
+    std::vector<Value> finalResult = this->finalMerge(bufferResult, diskResult);
+    return std::move(finalResult);
     //std::merge();
 
     /*
