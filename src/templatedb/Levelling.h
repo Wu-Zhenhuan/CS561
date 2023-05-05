@@ -10,7 +10,7 @@
 typedef templatedb::Pair Pair;
 typedef templatedb::run run;
 
-// Class definition of Levelling
+// Class definition for Levelling
 class Levelling {
 private:
     int currentLevel; // The current level of the levelling data structure
