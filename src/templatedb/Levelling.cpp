@@ -39,11 +39,18 @@ void Levelling::flushIn(std::tuple<run, int, int> buffer) {
     } else {
         run mergedRun = std::move(this->merge(bufferRun, this->levels.at(0)));
         this->levels.at(0) = std::move(mergedRun);
+        this->mins.at(0) = this->levels.at(0).front().first;
+        this->maxs.at(0) = this->levels.at(0).back().first;
+
         for (int i = 0; i < this->currentLevel - 1; i++) {
             if (levels.at(i).size() > levelCapacity(levels.size())) {
                 mergedRun = std::move(this->merge(this->levels.at(i), this->levels.at(i+1)));
                 this->levels.at(i+1) = std::move(mergedRun);
                 this->levels.at(i) = run(this->levelCapacity(i));
+
+
+                this->mins.at(i+1) = this->levels.at(0).front().first;
+                this->maxs.at(i+1) = this->levels.at(0).back().first;
             }
         }
         if (levels.at(currentLevel - 1).size() > levelCapacity(currentLevel - 1)) {
@@ -53,6 +60,10 @@ void Levelling::flushIn(std::tuple<run, int, int> buffer) {
                     this->levels.at(this->currentLevel - 1)));
             this->levels.at(this->currentLevel - 1) = std::move(mergedRun);
             this->levels.at(this->currentLevel - 2) = run(this->levelCapacity(currentLevel - 2));
+
+
+            this->mins.at(this->currentLevel - 1) = this->levels.at(0).front().first;
+            this->maxs.at(this->currentLevel - 1) = this->levels.at(0).back().first;
         }
     }
 
