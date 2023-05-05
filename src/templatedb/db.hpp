@@ -11,7 +11,7 @@
 
 #include "templatedb/operation.hpp"
 #include "Buffer.h"
-#include "Level.h"
+#include "Levelling.h"
 
 namespace templatedb
 {
@@ -29,7 +29,7 @@ class DB
 public:
     db_status status;
 
-    DB():buffer(BUFFER_SIZE) {};
+    DB():buffer(BUFFER_SIZE), level() {};
     ~DB() {close();};
 
     Value get(int key);
@@ -52,11 +52,11 @@ private:
     std::unordered_map<int, Value> table;
     size_t value_dimensions = 0;
     Buffer buffer;
-    Level level;
+    Levelling level;
 
     bool write_to_file();
     void flush();
-    std::vector<Value> finalMerge(std::vector<run> a, std::vector<run> b);
+    std::vector<Value> finalMerge(run higher, run lower);
 };
 
 }   // namespace templatedb

@@ -47,8 +47,9 @@ std::vector<Value> DB::scan()
 std::vector<Value> DB::scan(int min_key, int max_key)
 {
     std::vector<Pair> bufferResult = this->buffer.scan(min_key, max_key);
+    std::cout<<"############################"<<std::endl;
     std::vector<Pair> diskResult = this->level.scan(min_key, max_key);
-
+    return std::vector<Value>();
     //std::merge();
 
     /*
@@ -65,25 +66,28 @@ std::vector<Value> DB::scan(int min_key, int max_key)
 
 void DB::del(int key)
 {
-    table.erase(key);
+    this->buffer.del(key);
+    //table.erase(key);
 }
 
 
 void DB::del(int min_key, int max_key)
 {
-    for (auto it = table.begin(); it != table.end(); ) {
+    this->buffer.del(min_key, max_key);
+    /*for (auto it = table.begin(); it != table.end(); ) {
         if ((it->first >= min_key) && (it->first <= max_key)){
             table.erase(it++);
         } else { 
             ++it;
         }
-    }
+    }*/
 }
 
 
 size_t DB::size()
 {
-    return table.size();
+    this->buffer.size();
+    //return table.size();
 }
 
 
@@ -228,4 +232,44 @@ bool DB::write_to_file()
     }
 
     return true;
+}
+std::vector<Value> DB::finalMerge(run higher, run lower) {
+
+    /*
+    run resultSet(higher.size() + lower.size());
+    std::merge(higher.begin(), higher.end(), lower.begin(), lower.end(), std::back_inserter(resultSet), [ ](const Pair& lhs, const Pair& rhs )
+    {
+        return lhs.first < rhs.first;
+    });
+    return resultSet;
+    */
+    size_t i = 0;
+    size_t j = 0;
+    run resultSet;
+    resultSet.reserve(higher.size() + lower.size());
+    while (i < higher.size() && j < lower.size()) {
+        if (higher.at(i).first == lower.at(j).first) {
+            resultSet.push_back(higher.at(i++));
+            if (lower.at(j).second.visible || lower.at(j).second.range <= 0) {
+                // Not a range tombstone
+                j++;
+            }
+        } else if (higher.at(i).first < lower.at(j).first) {
+            resultSet.push_back(higher.at(i++));
+        } else {
+            resultSet.push_back(lower.at(j++));
+        }
+    }
+
+    if (i < higher.size()) {
+        resultSet.insert(resultSet.end(), higher.begin() + i, higher.end());
+    } else if (j < lower.size()) {
+        resultSet.insert(resultSet.end(), higher.begin() + j, lower.end());
+    }
+
+    vector<Value> finalResult(resultSet.size());
+    for (auto &pair: resultSet) {
+        finalResult.push_back(pair.second);
+    }
+    return std::move(finalResult);
 }

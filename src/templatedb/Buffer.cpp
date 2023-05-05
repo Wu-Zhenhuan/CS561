@@ -37,7 +37,7 @@ void Buffer::put(int key, Value val) {
     }
     /* Inserts if the key is new */
     this->pairs.push_back(Pair(key, val));
-    this->length++;
+    //this->length++;
 
     // Vector will have to reallocate the rest of elements if new element is not inserted to the end of the vector
 }
@@ -72,7 +72,7 @@ void Buffer::del(int key) {
     for (auto &pair: this->pairs) {
         if ((pair.first == key) && (pair.second.visible)) {
             pair.second.visible = false;
-            this->length--;
+            //this->length--;
             return;
         }
     }
@@ -93,7 +93,7 @@ void Buffer::del(int min_key, int max_key) {
 }
 
 size_t Buffer::size() {
-    return this->length;
+    return this->pairs.size();
 }
 
 bool Buffer::isFull() {

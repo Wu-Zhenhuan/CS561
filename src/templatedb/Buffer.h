@@ -15,13 +15,13 @@ typedef templatedb::run run;
 class Buffer {
 private:
     int capacity;
-    int length;
+    //int length;
     int min;
     int max;
 
     std::vector<Pair> pairs;
 public:
-    explicit Buffer(int capacity) : capacity(capacity), length(0) {
+    explicit Buffer(int capacity) : capacity(capacity) {
         pairs.reserve(capacity);
     };
     Value get(int key);
