@@ -6,7 +6,7 @@
 Tiering::Tiering() : currentLevel(0) {}
 
 templatedb::Value Tiering::get(int key) {
-    for (int i = this->currentLevel - 1; i >= 0; i--) {
+    for (int i = 0; i < this->currentLevel - 1; i++) {
         if ((this->mins.at(i) > key) || this->maxs.at(i) < key) {
             continue;
         }

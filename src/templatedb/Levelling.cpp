@@ -174,7 +174,8 @@ std::vector<Pair> Levelling::scan(int min_key, int max_key) {
 }
 std::vector<Pair> Levelling::scan() {
     std::vector<Pair> resultSet;
-    for (int i = this->currentLevel - 1; i >= 0; i--) {
+    for (int i = 0; i < this->currentLevel - 1; i++) {
+    //for (int i = this->currentLevel - 1; i >= 0; i--) {
         std::vector<Pair> levelResult;
         for (auto &pair: this->levels.at(i)) {
             levelResult.push_back(pair);
