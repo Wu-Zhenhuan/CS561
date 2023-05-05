@@ -3,7 +3,7 @@
 //
 
 #include "Levelling.h"
-// Get the value of a given key
+// Fetch the value of a given key
         templatedb::Value Levelling::get(int key) {
     // Iterate through all levels from top to bottom
     for (int i = this->currentLevel - 1; i >= 0; i--) {
